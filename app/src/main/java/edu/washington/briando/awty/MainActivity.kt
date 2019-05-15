@@ -9,7 +9,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var message: EditText
     private lateinit var phone: EditText
     private lateinit var nag: EditText
-    private lateinit var startBtn: Button
+    private lateinit var btn: Button
+    private lateinit var toast: Toast
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -18,12 +19,31 @@ class MainActivity : AppCompatActivity() {
         message = findViewById(R.id.message)
         phone = findViewById(R.id.phone)
         nag = findViewById(R.id.nag)
-        startBtn = findViewById(R.id.startBtn)
+        btn = findViewById(R.id.btn)
 
-        startBtn.isEnabled = false
+        btn.text = "Start"
+        btn.isEnabled = false
 
-        startBtn.setOnClickListener {
-            startBtn.text = "Stop"
+        btn.setOnClickListener {
+            if (btn.text.toString() == "Start") {
+                btn.text = "Stop"
+                val toastPhone = phone.text.toString()
+                val toastMsg = message.text.toString()
+                val interval = nag.text.toString()
+                if (toastPhone.length < 10) {
+                    toast = Toast.makeText(this, "Phone number must be 10 digits", Toast.LENGTH_SHORT)
+                    btn.text = "Start"
+                } else if (interval.toInt() <= 0) {
+                    toast = Toast.makeText(this, "Interval must be greater than 0", Toast.LENGTH_SHORT)
+                    btn.text = "Start"
+                } else {
+                    toast = Toast.makeText(this, "Texting $toastPhone : $toastMsg", Toast.LENGTH_SHORT)
+                }
+                toast.show()
+            } else {
+                btn.text = "Start"
+                toast.cancel()
+            }
         }
     }
 
@@ -39,9 +59,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                if (phone.text.isNotEmpty() && nag.text.isNotEmpty() && message.text.isNotEmpty()) {
-                    startBtn.isEnabled = true
-                }
+                checkBtn()
             }
         })
         phone.addTextChangedListener(object : TextWatcher {
@@ -54,9 +72,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                if (phone.text.isNotEmpty() && nag.text.isNotEmpty() && message.text.isNotEmpty()) {
-                    startBtn.isEnabled = true
-                }
+                checkBtn()
             }
         })
         nag.addTextChangedListener(object : TextWatcher {
@@ -69,10 +85,14 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                if (phone.text.isNotEmpty() && nag.text.isNotEmpty() && message.text.isNotEmpty()) {
-                    startBtn.isEnabled = true
-                }
+                checkBtn()
             }
         })
+    }
+
+    fun checkBtn() {
+        if (phone.text.isNotEmpty() && nag.text.isNotEmpty() && message.text.isNotEmpty()) {
+            btn.isEnabled = true
+        }
     }
 }
