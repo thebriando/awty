@@ -106,7 +106,7 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    fun checkBtn() {
+    private fun checkBtn() {
         if (phone.text.isNotEmpty() && nag.text.isNotEmpty() && message.text.isNotEmpty()) {
             btn.isEnabled = true
         }
@@ -117,7 +117,7 @@ class MainActivity : AppCompatActivity() {
         val smsManager = SmsManager.getDefault()
         timer = fixedRateTimer("timer", false, 0L, interval.toLong() * 1000) {
             this@MainActivity.runOnUiThread {
-                Log.d(TAG, "here")
+                Log.d(TAG, toastMsg)
                 smsManager.sendTextMessage(
                     toastPhone,
                     null,
